@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 from datetime import datetime, timezone
 from pathlib import Path
@@ -24,19 +25,36 @@ def _trial_count(path: Path) -> int:
         raise ValueError(f"trial log not found: {path}")
     count = 0
     parts: set[int] = set()
+
+    def reject_nonstandard_constant(value: str) -> None:
+        raise ValueError(f"non-standard JSON number {value}")
+
     for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
         if not line.strip():
             continue
         try:
-            record = json.loads(line)
-        except json.JSONDecodeError as exc:
+            record = json.loads(line, parse_constant=reject_nonstandard_constant)
+        except (json.JSONDecodeError, ValueError) as exc:
             raise ValueError(f"invalid JSON in {path} on line {number}: {exc}") from exc
         if not isinstance(record, dict):
             raise ValueError(f"trial log line {number} must contain a JSON object")
+        if not isinstance(record.get("time"), str) or not record["time"].strip():
+            raise ValueError(f"trial log line {number} must include its trial time")
+        if not isinstance(record.get("what_changed"), str) or not record["what_changed"].strip():
+            raise ValueError(f"trial log line {number} must describe what changed")
         part = record.get("part")
         if isinstance(part, bool) or str(part) not in {"1", "2"}:
             raise ValueError(f"trial log line {number} must identify part 1 or part 2")
-        parts.add(int(part))
+        part_number = int(part)
+        if part_number == 1:
+            if record.get("split") != "validation" or not isinstance(record.get("validation_metrics"), dict):
+                raise ValueError(f"trial log line {number} must include Part 1 validation metrics")
+        else:
+            value = record.get("val_log_loss")
+            if (not isinstance(value, (int, float)) or isinstance(value, bool)
+                    or not math.isfinite(value)):
+                raise ValueError(f"trial log line {number} must include a finite Part 2 val_log_loss")
+        parts.add(part_number)
         count += 1
     if count < 1:
         raise ValueError("trial log must contain at least one recorded trial")
