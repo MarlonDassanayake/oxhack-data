@@ -14,13 +14,14 @@ Last updated: 2026-10-24
 - Ricky's public `rixzky/oxhack-models` main branch (commit `1360bdc9e3f2c5e350472e4cd64ea8a3751b7cf1`) was reviewed against contract v1.2.0. Its real-data runner produced and validated 117,880 real predictions for `market` and `elo` across warmup, train, calibration and validation; holdout was excluded. Ricky's forecast evaluator produced validation metrics on the 2,916 matches shared by both models: market log loss 0.972545 / Brier 0.579043; Elo 0.999040 / 0.597352.
 - The real validation backtest produced 17,496 decision rows for `market` and `elo` across naive, controlled and controlled-best-price policies, covering 2,916 fixtures per model. No holdout decisions were run. The full Part 1 test suite passes (56 tests).
 - A 12-file real validation handoff archive is available at `artifacts-real-validation.zip`; the synthetic ledger is kept out of that archive.
+- `python -m decisions.freeze` now creates the current-contract `frozen_config.json` from the team-selected model/version and policy, counts the merged trial log, reproduces the contract's golden hash, and refuses to overwrite an existing freeze. Do not run it until the whole team agrees to freeze.
 - Holdout metrics and decisions remain gated on the team's current-contract freeze.
 
 ## Waiting on team inputs
 
 - Ricky's repository does not include generated artifacts (the `artifacts/` directory is gitignored). Real market/Elo predictions and validation decisions are now in this repo's `artifacts/`. The current repository contains Elo and Dixon-Coles code, but no `marketnet.py` or `lgbm.py`; those two planned model outputs remain pending.
 - A full eight-league Dixon-Coles run was attempted from the current model source but was stopped during its first real-data fit after several minutes without producing output. It needs a faster/refined fitting run from Ricky before it can be included. The existing validated market/Elo outputs and decisions remain complete and usable.
-- A holdout run needs the selected model/version and completed `frozen_config.json` from the team freeze.
+- A holdout run needs the selected model/version and completed `frozen_config.json` from the team freeze. The freeze command is prepared; the team has not frozen yet.
 - Optional Tiger Data loading is not implemented; there is no configured database connection.
 
 ## How to run
@@ -33,6 +34,8 @@ python -m data_pipeline.download --leagues E0 E1 SP1 D1 I1 F1 N1 P1 --seasons 20
 python -m data_pipeline.run --leagues E0 E1 SP1 D1 I1 F1 N1 P1 --seasons 2005-06:2025-26 --permission-note "Team owner confirmed intended hackathon training use."
 python -m decisions.run_backtest --split validation --models market,elo,lgbm
 python -m decisions.run_backtest --golden --split validation --models market,elo,lgbm
+# At the team freeze only, provide a JSON policy file and merged trial log:
+python -m decisions.freeze --model lgbm --model-version VERSION --policy-json artifacts/frozen_policy.json
 ```
 
 The real backtest reads `artifacts/predictions.parquet` and writes `artifacts/decisions.parquet` once Ricky shares Part 2's predictions. Do not run holdout before the freeze.
