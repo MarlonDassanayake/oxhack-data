@@ -15,12 +15,14 @@ Last updated: 2026-10-24
 - The refreshed validation backtest produced 43,740 decision rows: five models x three policies x 2,916 fixtures. It uses Ricky's current predictions for all models, so policy evaluation is based on one consistent prediction set. No holdout predictions or decisions were included. The full Part 1 test suite passes (59 tests).
 - An updated five-model real validation handoff archive is available at `artifacts/artifacts-real-validation-5models.zip`; synthetic outputs and the previously superseded two-model forecast metrics are excluded.
 - `python -m decisions.freeze` now creates the current-contract `frozen_config.json` from the team-selected model/version and policy, counts the merged trial log, reproduces the contract's golden hash, and refuses to overwrite an existing freeze. Do not run it until the whole team agrees to freeze.
+- Ricky's supplied `trials_log.jsonl` is valid JSONL with 170 Part 2 model-trial records, but has no Part 1 policy-trial records. Freeze validation now rejects a log unless both parts are present; this file is not yet the merged freeze log.
 - Holdout metrics and decisions remain gated on the team's current-contract freeze.
 
 ## Waiting on team inputs
 
 - Ricky's generated artifacts remain untracked in his repo, so transfers continue through ZIP/shared drive. The refreshed predictions and decisions are local in this repo's ignored `artifacts/` directory and in the updated validation archive.
 - Ricky's model status reports all five real models complete and recommends MarketNet for the freeze based on validation forecast results. The team has not frozen or run holdout.
+- The final `policy_metrics.json` and Part 1 policy-trial records are still needed from the validation evaluation before the trial logs can be merged.
 - A holdout run needs the selected model/version and completed `frozen_config.json` from the team freeze. The freeze command is prepared; the team has not frozen yet.
 - Optional Tiger Data loading is not implemented; there is no configured database connection.
 

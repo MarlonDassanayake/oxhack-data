@@ -23,6 +23,7 @@ def _trial_count(path: Path) -> int:
     if not path.is_file():
         raise ValueError(f"trial log not found: {path}")
     count = 0
+    parts: set[int] = set()
     for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
         if not line.strip():
             continue
@@ -32,9 +33,16 @@ def _trial_count(path: Path) -> int:
             raise ValueError(f"invalid JSON in {path} on line {number}: {exc}") from exc
         if not isinstance(record, dict):
             raise ValueError(f"trial log line {number} must contain a JSON object")
+        part = record.get("part")
+        if isinstance(part, bool) or str(part) not in {"1", "2"}:
+            raise ValueError(f"trial log line {number} must identify part 1 or part 2")
+        parts.add(int(part))
         count += 1
     if count < 1:
         raise ValueError("trial log must contain at least one recorded trial")
+    if parts != {1, 2}:
+        missing = ", ".join(f"part {part}" for part in sorted({1, 2} - parts))
+        raise ValueError(f"trial log must merge model and policy trials; missing {missing}")
     return count
 
 

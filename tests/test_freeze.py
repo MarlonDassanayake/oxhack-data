@@ -47,3 +47,11 @@ def test_freeze_rejects_unknown_policy_keys_and_invalid_trials(tmp_path):
     with pytest.raises(ValueError, match="invalid JSON"):
         freeze_to_file(model_id="elo", model_version="v1", policy={}, trials_log=log,
                        output=tmp_path / "frozen_config.json")
+
+
+def test_freeze_requires_trials_from_both_parts(tmp_path):
+    log = tmp_path / "trials_log.jsonl"
+    log.write_text('{"part":2,"what_changed":"model trial"}\n')
+    with pytest.raises(ValueError, match="missing part 1"):
+        freeze_to_file(model_id="marketnet", model_version="mn-1.1", policy={},
+                       trials_log=log, output=tmp_path / "frozen_config.json")
