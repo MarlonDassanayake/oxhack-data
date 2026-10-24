@@ -1,0 +1,31 @@
+{
+  "chosen_using": [
+    "validation"
+  ],
+  "config_hash": "beac4753cb5f",
+  "contract_version": "1.2.0",
+  "frozen_at_utc": "2026-10-24T17:17:02Z",
+  "model_id": "marketnet",
+  "model_version": "mn-1.1",
+  "n_trials_logged": 29,
+  "policy": {
+    "allow_precisions": [
+      "EXACT",
+      "DATE",
+      "WINDOW"
+    ],
+    "best_price_max_prob_gap": 0.1,
+    "flat_stake_frac": 0.01,
+    "initial_bankroll": 1000.0,
+    "kelly_multiplier": 0.25,
+    "league_gate": false,
+    "max_open_exposure_frac": 0.2,
+    "max_quote_age_hours": 120,
+    "max_stake_frac_per_match": 0.02,
+    "min_ev": 0.02,
+    "price_haircut": 0.0,
+    "price_source": "REFERENCE",
+    "prob_stress_delta": 0.02,
+    "staking_mode": "FLAT"
+  }
+}

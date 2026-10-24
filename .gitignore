@@ -2,6 +2,7 @@ artifacts/
 !artifacts/
 artifacts/*
 !artifacts/trials_log.jsonl
+!artifacts/frozen_config.json
 artifacts.zip
 artifacts-real-validation.zip
 data/raw/

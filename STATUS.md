@@ -14,18 +14,18 @@ Last updated: 2026-10-24
 - Ricky supplied schema-valid predictions for all five models at their current versions (`market-1.0`, `elo-1.0`, `dc-1.0`, `mn-1.1`, `lgbm-1.1`): 2,916 validation rows per model. The file also includes warmup, train and calibration predictions, and no holdout rows. Its `splits.json` matches Part 1.
 - The refreshed validation backtest produced 43,740 decision rows: five models x three policies x 2,916 fixtures. It uses Ricky's current predictions for all models, so policy evaluation is based on one consistent prediction set. No holdout predictions or decisions were included. The full Part 1 test suite passes (59 tests).
 - An updated five-model real validation handoff archive is available at `artifacts/artifacts-real-validation-5models.zip`; synthetic outputs and the previously superseded two-model forecast metrics are excluded.
-- `python -m decisions.freeze` now creates the current-contract `frozen_config.json` from the team-selected model/version and policy, counts the merged trial log, reproduces the contract's golden hash, and refuses to overwrite an existing freeze. Do not run it until the whole team agrees to freeze.
+- Team freeze completed on 2026-10-24 using validation-only selection: MarketNet `mn-1.1` with the contract-default controlled policy. `artifacts/frozen_config.json` records hash `beac4753cb5f` and all 29 logged trials. The freeze command refuses to overwrite this file.
 - The reconciled freeze-input trial log is `artifacts/trials_log.jsonl`: 15 Part 1 policy-evaluation entries plus all 14 finite Part 2 model-trial entries retained from Ricky's earlier 191-row log. Ricky confirmed the 175 null and two infinite Part 2 records came from failed runs and should be omitted. Duplicate finite entries are retained as separate runs. The log is strict JSON and passes the freeze-input validation.
 - Part 1 validation-trial records are now prepared in local `artifacts/trials_log_part1.jsonl`: 15 entries covering the five current model versions and three contract policies. The settings' hashes match the validation decisions ledger; the metrics are validation-only and the source file provides no evaluation timestamp.
-- Holdout metrics and decisions remain gated on the team's current-contract freeze.
+- Holdout metrics and decisions remain gated on the completed freeze; no holdout run has occurred yet.
 
 ## Waiting on team inputs
 
 - Ricky's generated artifacts remain untracked in his repo, so transfers continue through ZIP/shared drive. The refreshed predictions and decisions are local in this repo's ignored `artifacts/` directory and in the updated validation archive.
-- Ricky's model status reports all five real models complete and recommends MarketNet for the freeze based on validation forecast results. The team has not frozen or run holdout.
+- Ricky's model status reports all five real models complete and recommends MarketNet based on validation forecast results. The team freeze is complete; Ricky must receive `artifacts/frozen_config.json` to run and lock the holdout.
 - Ricky's final validation-only `policy_metrics.json` has been validated and copied to `artifacts/policy_metrics.json`. Part 1 trial records are prepared locally and are present in Ricky's merged log.
 - The local `artifacts/forecast_metrics.json` currently has only market and Elo rows, despite Ricky's statement that a five-model copy exists in the merged artifacts. This is not read by the freeze command, but the final five-model validation metrics still need to be transferred for the complete app/submission evidence bundle.
-- A holdout run needs the selected model/version and completed `frozen_config.json` from the team freeze. The freeze command is prepared; the team has not frozen yet.
+- A holdout run needs Ricky to consume the completed `frozen_config.json`; do not rerun freeze or inspect holdout until Ricky performs the one-time locked run.
 - Optional Tiger Data loading is not implemented; there is no configured database connection.
 
 ## How to run
@@ -38,7 +38,7 @@ python -m data_pipeline.download --leagues E0 E1 SP1 D1 I1 F1 N1 P1 --seasons 20
 python -m data_pipeline.run --leagues E0 E1 SP1 D1 I1 F1 N1 P1 --seasons 2005-06:2025-26 --permission-note "Team owner confirmed intended hackathon training use."
 python -m decisions.run_backtest --split validation --models market,elo,dixon_coles,marketnet,lgbm
 python -m decisions.run_backtest --golden --split validation --models market,elo,lgbm
-# At the team freeze only, after the merged trial log is in artifacts/:
+# Already completed for the team freeze; do not rerun (the command refuses to overwrite the freeze):
 python -m decisions.freeze --model marketnet --model-version mn-1.1
 # Add --policy-json artifacts/frozen_policy.json only if the team selects non-default settings.
 ```
