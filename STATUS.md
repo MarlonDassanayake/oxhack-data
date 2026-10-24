@@ -34,8 +34,9 @@ python -m data_pipeline.download --leagues E0 E1 SP1 D1 I1 F1 N1 P1 --seasons 20
 python -m data_pipeline.run --leagues E0 E1 SP1 D1 I1 F1 N1 P1 --seasons 2005-06:2025-26 --permission-note "Team owner confirmed intended hackathon training use."
 python -m decisions.run_backtest --split validation --models market,elo,dixon_coles,marketnet,lgbm
 python -m decisions.run_backtest --golden --split validation --models market,elo,lgbm
-# At the team freeze only, provide a JSON policy file and merged trial log:
-python -m decisions.freeze --model lgbm --model-version VERSION --policy-json artifacts/frozen_policy.json
+# At the team freeze only, after the merged trial log is in artifacts/:
+python -m decisions.freeze --model marketnet --model-version mn-1.1
+# Add --policy-json artifacts/frozen_policy.json only if the team selects non-default settings.
 ```
 
 The real backtest reads `artifacts/predictions.parquet` and writes `artifacts/decisions.parquet`. Do not run holdout before the freeze.

@@ -103,12 +103,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model", required=True, choices=S.MODEL_IDS, help="Model selected by Part 2 using validation only.")
     parser.add_argument("--model-version", required=True)
-    parser.add_argument("--policy-json", type=Path, required=True, help="JSON object with the team's selected policy settings.")
+    parser.add_argument("--policy-json", type=Path, help="Optional JSON object with the team's selected policy settings; defaults to the contract policy.")
     parser.add_argument("--trials-log", type=Path, default=artifacts_dir / "trials_log.jsonl")
     parser.add_argument("--output", type=Path, default=artifacts_dir / "frozen_config.json")
     args = parser.parse_args()
     try:
-        policy = json.loads(args.policy_json.read_text(encoding="utf-8"))
+        policy = json.loads(args.policy_json.read_text(encoding="utf-8")) if args.policy_json else {}
         config = freeze_to_file(
             model_id=args.model,
             model_version=args.model_version,
