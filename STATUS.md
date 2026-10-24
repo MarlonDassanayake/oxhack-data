@@ -25,6 +25,7 @@ Last updated: 2026-10-24
 - Ricky's model status reports all five real models complete and recommends MarketNet for the freeze based on validation forecast results. The team has not frozen or run holdout.
 - Ricky's final validation-only `policy_metrics.json` has been validated and copied to `artifacts/policy_metrics.json`. Part 1 trial records are prepared locally and are present in Ricky's merged log.
 - Ask Ricky for a complete Part 2 trial log that retains every actual model configuration tried, including the earlier finite MarketNet trials, and reconciles repeated entries. Do not use the shortened candidate as the freeze input until that history is confirmed complete.
+- Ask Ricky for the final validation `forecast_metrics.json` for all five current model versions. The local copy has only market and Elo rows and is stale.
 - A holdout run needs the selected model/version and completed `frozen_config.json` from the team freeze. The freeze command is prepared; the team has not frozen yet.
 - Optional Tiger Data loading is not implemented; there is no configured database connection.
 
