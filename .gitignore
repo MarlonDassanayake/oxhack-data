@@ -1,4 +1,7 @@
 artifacts/
+!artifacts/
+artifacts/*
+!artifacts/trials_log.jsonl
 artifacts.zip
 artifacts-real-validation.zip
 data/raw/
